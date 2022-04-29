@@ -10,6 +10,7 @@ namespace Lab_4
     public partial class MainWindow : Window
     {
         private readonly Function[] functions = { new FunctionOne(), new FunctionTwo(), new FunctionThree() };
+        private Calculator calculator;
 
         public MainWindow()
         {
@@ -30,9 +31,14 @@ namespace Lab_4
 
         private void CalcButtonClick(object sender, RoutedEventArgs e)
         {
+            yOriginal.Text = string.Empty;
+            yInterpolated.Text = string.Empty;
+            x.Text = string.Empty;
             Graph.Plot.Clear();
+
             Function function;
-            int a, b, pointsCount;
+            int a, b;
+            uint pointsCount;
             try
             {
                 function = GetFunction();
@@ -46,21 +52,14 @@ namespace Lab_4
                 MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            function.SetRange(a, b);
-            function.GeneratePoints(pointsCount);
+            calculator = new Calculator(function, a, b, pointsCount);
+            calculator.PerformCalculation();
+            DrawPoints(calculator.OrigninalX, calculator.OrigninalY, System.Drawing.Color.CornflowerBlue, "Original", 1, 1);
+            DrawPoints(calculator.InterpolatedX, calculator.InterpolatedY, System.Drawing.Color.Red, "Interpolated", 1, 1);
+            DrawPoints(calculator.PointsX, calculator.PointsY, System.Drawing.Color.Black, "Boundaries", 4, 0);
 
-            double[] dataX = new double[function.Points.Length];
-            double[] dataY = new double[function.Points.Length];
-            for (int i = 0; i < function.Points.Length; i++)
-            {
-                dataX[i] = function.Points[i].X;
-                dataY[i] = function.Points[i].Y;
-            }
-            DrawPoints(dataX, dataY, System.Drawing.Color.CornflowerBlue, "Original", 10);
 
-            SplineInterpolation interpolation = new SplineInterpolation(function);
-            interpolation.Calculate();
-            DrawPoints(interpolation.interpolatedX, interpolation.interpolatedY, System.Drawing.Color.Red, "Interpolated", 1);
+            pointCalculator.Visibility = Visibility.Visible;
         }
 
         private Function GetFunction()
@@ -151,7 +150,7 @@ namespace Lab_4
             }
         }
 
-        private int GetCount()
+        private uint GetCount()
         {
             if (count.Text == string.Empty)
             {
@@ -165,25 +164,25 @@ namespace Lab_4
                 count.ClearValue(BackgroundProperty);
             }
 
-            int pointsCount;
+            uint pointsCount;
             try
             {
-                pointsCount = int.Parse(count.Text);
+                pointsCount = uint.Parse(count.Text);
             }
             catch
             {
                 throw new Exception("Check input for count of points.");
             }
 
-            if (pointsCount < 1)
-                throw new Exception("Points count must be 1 or greater.");
+            if (pointsCount < 2)
+                throw new Exception("Points count must be 2 or greater.");
 
             return pointsCount;
         }
 
-        private void DrawPoints(double[] dataX, double[] dataY, System.Drawing.Color color, string lbl, int markSize)
+        private void DrawPoints(double[] dataX, double[] dataY, System.Drawing.Color color, string lbl, int markSize, int lineSize)
         {
-            Graph.Plot.AddScatter(dataX, dataY, color, markerSize: markSize, lineWidth: 1, label: lbl);
+            Graph.Plot.AddScatter(dataX, dataY, lineWidth: lineSize, color: color, markerSize: markSize, label: lbl);
             Graph.Refresh();
         }
 
@@ -197,6 +196,37 @@ namespace Lab_4
             }
 
             return maxFunctionName * 25;
+        }
+
+        private void CalculateY_TextChanged(object sender, RoutedEventArgs e)
+        {
+            ScottPlot.Plottable.MarkerPlot dot1 = null, dot2 = null;
+
+            if (x.Text == "-" || x.Text == "\u2408" || x.Text == string.Empty)
+                return;
+
+            double xValue = 0, originalY, interpolatedY;
+            try
+            {
+                xValue = double.Parse(x.Text);
+                if (xValue < calculator.A || xValue > calculator.B)
+                    throw new Exception("X must be in range [a, b].");
+            } catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            originalY = calculator.CalculateOriginalY(xValue);
+            interpolatedY = calculator.CalculateInterpolatedY(xValue);
+            yOriginal.Text = originalY.ToString();
+            yInterpolated.Text = interpolatedY.ToString();
+
+            dot1 = Graph.Plot.AddPoint(xValue, originalY, color: System.Drawing.Color.CornflowerBlue, size: 7);
+            dot2 = Graph.Plot.AddPoint(xValue, interpolatedY, color: System.Drawing.Color.Red, size: 7);
+            Graph.Refresh();
+
+            Graph.Plot.Remove(dot1);
+            Graph.Plot.Remove(dot2);
         }
     }
 }

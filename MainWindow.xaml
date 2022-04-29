@@ -13,31 +13,50 @@
         </Grid.ColumnDefinitions>
         <StackPanel x:Name="LeftPanel" Margin="10" Grid.Column="0">
             <GroupBox Padding="5">
-                    <GroupBox.Header>
-                        <TextBlock FontWeight="DemiBold">Select a function</TextBlock>
-                    </GroupBox.Header>
-                    <StackPanel Name="Functions"/>
-                </GroupBox>
-                <GroupBox Padding="5">
-                    <GroupBox.Header>
-                        <TextBlock FontWeight="DemiBold">Choose range</TextBlock>
-                    </GroupBox.Header>
-                    <StackPanel>
-                        <DockPanel LastChildFill="True">
-                            <TextBlock Text="a: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                            <TextBox x:Name="a" Height="20" Width="Auto"/>
-                        </DockPanel>
-                        <DockPanel LastChildFill="True">
-                            <TextBlock Text="b: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                            <TextBox x:Name="b" Height="20" Width="Auto"/>
-                        </DockPanel>
-                    </StackPanel>
-                </GroupBox>
+                <GroupBox.Header>
+                    <TextBlock FontWeight="DemiBold">Select a function</TextBlock>
+                </GroupBox.Header>
+                <StackPanel Name="Functions"/>
+            </GroupBox>
+            <GroupBox Padding="5">
+                <GroupBox.Header>
+                    <TextBlock FontWeight="DemiBold">Choose range</TextBlock>
+                </GroupBox.Header>
+                <StackPanel>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock Text="a: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                        <TextBox x:Name="a" Height="20" Width="Auto"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock Text="b: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                        <TextBox x:Name="b" Height="20" Width="Auto"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
             <DockPanel LastChildFill="True">
                 <TextBlock Text="Count of points: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
                 <TextBox x:Name="count" Height="20" Width="Auto"/>
             </DockPanel>
             <Button x:Name="CalcButton" HorizontalAlignment="Center" Height="25" Margin="0 10 0 0" Padding="10 0 10 0" Cursor="Hand" Click="CalcButtonClick">Calculate</Button>
+            <GroupBox Name="pointCalculator" Visibility="Hidden">
+                <GroupBox.Header>
+                    <TextBlock FontWeight="DemiBold">Find original and interpolated Y</TextBlock>
+                </GroupBox.Header>
+                <StackPanel>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock Text="x: " Margin="5" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                        <TextBox x:Name="x" Height="20" Width="Auto" TextChanged="CalculateY_TextChanged"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Original y: " Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Name="yOriginal" Margin="5" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Interpolated y: " Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Name="yInterpolated" Margin="5" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
         <Grid Margin="10" Grid.Column="1">
             <GroupBox Padding="5">
