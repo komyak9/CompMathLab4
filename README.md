@@ -1,6 +1,4 @@
-# CompMathLab4
-
-Spline interpolation (cubic splines)
+# Spline interpolation (cubic splines)
 
 The system must follow the requirements:
 1. System must provide a choice of functions and [a, b] range for the user.
